@@ -13,7 +13,7 @@ let notificationTimeout = null;
  * @param {object | null} webAppInstance - window.Telegram.WebApp instance or null.
  * @param {object | null} pickrConstructor - window.Pickr constructor or null.
  */
-export function initializeUI(elements, webAppInstance, pickrConstructor) {
+export function initializeUI(elements, webAppInstance, pickrConstructor) { // Эта функция уже экспортируется
     domElements = elements;
     WebApp = webAppInstance;
     Pickr = pickrConstructor; // Store Pickr constructor
@@ -28,7 +28,7 @@ export function initializeUI(elements, webAppInstance, pickrConstructor) {
  * @param {HTMLInputElement} sliderElement - The slider input element.
  * @param {HTMLSpanElement} spanElement - The span element to display the value.
  */
-export function updateSliderValueDisplay(sliderElement, spanElement) {
+export function updateSliderValueDisplay(sliderElement, spanElement) { // Эта функция уже экспортируется
     if (sliderElement && spanElement) {
         spanElement.textContent = sliderElement.value;
     }
@@ -38,7 +38,7 @@ export function updateSliderValueDisplay(sliderElement, spanElement) {
  * Toggles the visibility of UI elements related to vertical (4-color) mode.
  * @param {boolean} showVertical - Whether to show the vertical controls.
  */
-export function toggleVerticalControlsUI(showVertical) {
+export function toggleVerticalControlsUI(showVertical) { // Эта функция уже экспортируется
     if (domElements.verticalSliderGroup && domElements.verticalColorPickers && domElements.body) {
         domElements.body.classList.toggle('vertical-mode-enabled', showVertical);
         // Visibility of pickers is handled by CSS via body class
@@ -52,7 +52,7 @@ export function toggleVerticalControlsUI(showVertical) {
  * Displays a message within the palette grid area (e.g., for errors or initial state).
  * @param {string} message - The message text to display.
  */
-export function displayPaletteMessage(message) {
+export function displayPaletteMessage(message) { // Эта функция уже экспортируется
     const grid = domElements.paletteGrid;
     if (!grid) { console.warn("Cannot display message, palette grid not found."); return; }
 
@@ -82,7 +82,7 @@ export function displayPaletteMessage(message) {
  * @param {Array<Array<string>>} paletteData - 2D array of HEX color strings.
  * @param {Function} onCellClick - Callback function for when a palette cell is clicked (receives hexColor).
  */
-export function renderPalette(paletteData, onCellClick) {
+export function renderPalette(paletteData, onCellClick) { // Эта функция уже экспортируется
     const grid = domElements.paletteGrid;
     const gridContainer = domElements.paletteGridContainer;
     if (!grid || !gridContainer) {
@@ -105,7 +105,6 @@ export function renderPalette(paletteData, onCellClick) {
     const gridStyle = getComputedStyle(grid);
     const containerPaddingX = parseFloat(containerStyle.paddingLeft) + parseFloat(containerStyle.paddingRight);
     const containerPaddingY = parseFloat(containerStyle.paddingTop) + parseFloat(containerStyle.paddingBottom);
-    // Use clientWidth/Height which includes padding but excludes border/scrollbar
     const availableWidth = gridContainer.clientWidth - containerPaddingX;
     const availableHeight = gridContainer.clientHeight - containerPaddingY;
     const gap = parseFloat(gridStyle.gap) || 0;
@@ -155,6 +154,7 @@ export function renderPalette(paletteData, onCellClick) {
     grid.appendChild(fragment);
 }
 
+// --- ИСПРАВЛЕНИЕ ЗДЕСЬ: ДОБАВЛЕНО `export` ---
 /**
  * Initializes Pickr instances for all color picker trigger buttons.
  * @param {Function} onColorSaveCallback - Callback function (pickerId, newColor) => {} called when color is saved.
@@ -167,7 +167,6 @@ export function initializeColorPickers(onColorSaveCallback) {
     }
 
     const pickrInstances = {};
-    // Use the potentially updated domElements object
     const triggers = [
         domElements.colorLeftTrigger, domElements.colorRightTrigger,
         domElements.colorTopTrigger, domElements.colorBottomTrigger
@@ -175,24 +174,20 @@ export function initializeColorPickers(onColorSaveCallback) {
 
     triggers.forEach(trigger => {
         if (!trigger) {
-            // Attempt to find the element again, in case initialization order was tricky
             const potentialId = Object.keys(domElements).find(key => domElements[key] === trigger);
             console.warn(`Color picker trigger element${potentialId ? ` (${potentialId})` : ''} not found during Pickr initialization.`);
-            return; // Skip if element doesn't exist
+            return;
         }
 
-        const pickerId = trigger.id.replace('-trigger', ''); // e.g., 'color-left'
-        const initialColor = trigger.dataset.color || '#ffffff'; // Get initial color from data attribute
-        trigger.style.backgroundColor = initialColor; // Ensure initial background is set
+        const pickerId = trigger.id.replace('-trigger', '');
+        const initialColor = trigger.dataset.color || '#ffffff';
+        trigger.style.backgroundColor = initialColor;
 
         try {
             const pickr = Pickr.create({
                 el: trigger,
-                theme: 'nano', // Or 'classic', 'monolith'
+                theme: 'nano',
                 default: initialColor,
-                // position: 'bottom-middle', // Optional: Adjust popup position
-                // appClass: 'custom-pickr-theme', // Optional: Class for custom CSS
-
                 swatches: [
                     '#F44336', '#E91E63', '#9C27B0', '#673AB7',
                     '#3F51B5', '#2196F3', '#03A9F4', '#00BCD4',
@@ -200,63 +195,39 @@ export function initializeColorPickers(onColorSaveCallback) {
                     '#FFEB3B', '#FFC107', '#FF9800', '#FF5722',
                     '#795548', '#9E9E9E', '#607D8B', '#000000', '#FFFFFF'
                 ],
-
                 components: {
                     preview: true,
-                    // opacity: false, // Keep opacity disabled unless needed
                     hue: true,
                     interaction: {
-                        hex: true, // Use HEX input
+                        hex: true,
                         input: true,
-                        save: true // Show Save button
+                        save: true
                     }
                 },
-
-                // Optional: Customize button text
-                 i18n: {
-                    'ui:save': 'OK',
-                    'btn:save': 'OK',
-                 }
+                 i18n: { 'ui:save': 'OK', 'btn:save': 'OK', }
             });
 
-            // --- Event Listeners for Pickr ---
             pickr.on('save', (color, instance) => {
                 if (!color) {
-                    // Handle case where user clears input and saves
                     console.warn("Pickr 'save' event with null color.");
-                     // Revert to previous color or default
                      const triggerEl = instance.options.el;
                      const previousColor = triggerEl.dataset.color || instance.options.default;
-                     instance.setColor(previousColor, true); // Silently set color back
+                     instance.setColor(previousColor, true);
                      instance.hide();
                     return;
                 }
-                const hexColor = color.toHEXA().toString(); // Get #RRGGBB format
+                const hexColor = color.toHEXA().toString();
                 const triggerElement = instance.options.el;
 
-                // Update the trigger button's state
                 triggerElement.style.backgroundColor = hexColor;
-                triggerElement.dataset.color = hexColor; // Store the canonical value
+                triggerElement.dataset.color = hexColor;
 
-                // Notify the main application logic
                 if (typeof onColorSaveCallback === 'function') {
                     onColorSaveCallback(pickerId, hexColor);
                 }
-
-                instance.hide(); // Close the picker
+                instance.hide();
             });
 
-             // Optional: Live background update on change (before saving)
-             /*
-             pickr.on('change', (color, source, instance) => {
-                if(color) { // Ensure color is valid
-                    const hexColor = color.toHEXA().toString();
-                    instance.options.el.style.backgroundColor = hexColor;
-                }
-             });
-             */
-
-            // Store the instance
             pickrInstances[pickerId] = pickr;
 
         } catch (error) {
@@ -274,18 +245,17 @@ export function initializeColorPickers(onColorSaveCallback) {
  * @param {string} message - The message text.
  * @param {boolean} [isError=false] - True if the message is an error.
  */
-export function showCopyNotification(message, isError = false) {
+export function showCopyNotification(message, isError = false) { // Эта функция уже экспортируется
     const notificationElement = domElements.copyNotificationElement;
     if (!notificationElement) return;
     if (notificationTimeout) { clearTimeout(notificationTimeout); notificationTimeout = null; }
 
     notificationElement.textContent = message;
-    notificationElement.classList.toggle('error', isError); // Use CSS class for styling
+    notificationElement.classList.toggle('error', isError);
     notificationElement.classList.add('show');
 
     notificationTimeout = setTimeout(() => {
         notificationElement.classList.remove('show');
-        // Remove error class after fade out transition
         setTimeout(() => notificationElement.classList.remove('error'), 300);
     }, 2000);
 }
@@ -294,7 +264,7 @@ export function showCopyNotification(message, isError = false) {
  * Copies the given HEX color to the clipboard, using HapticFeedback if available.
  * @param {string} colorHex - The HEX color string to copy.
  */
-export async function copyColorToClipboard(colorHex) {
+export async function copyColorToClipboard(colorHex) { // Эта функция уже экспортируется
     if (!navigator.clipboard) {
         console.warn("Clipboard API not available.");
         showCopyNotification("Clipboard API not supported", true);
@@ -305,11 +275,11 @@ export async function copyColorToClipboard(colorHex) {
         await navigator.clipboard.writeText(colorHex);
         console.log(`Copied ${colorHex} to clipboard.`);
         showCopyNotification(`Copied ${colorHex}!`);
-        WebApp?.HapticFeedback?.notificationOccurred('success'); // Use optional chaining
+        WebApp?.HapticFeedback?.notificationOccurred('success');
     } catch (err) {
         console.error('Failed to copy color: ', err);
         showCopyNotification("Failed to copy!", true);
-        WebApp?.HapticFeedback?.notificationOccurred('error'); // Use optional chaining
+        WebApp?.HapticFeedback?.notificationOccurred('error');
     }
 }
 
@@ -317,7 +287,7 @@ export async function copyColorToClipboard(colorHex) {
  * Applies Telegram theme parameters to the application's UI via CSS variables.
  * @param {object} themeParams - The themeParams object from Telegram WebApp.
  */
-export function applyTelegramTheme(themeParams) {
+export function applyTelegramTheme(themeParams) { // Эта функция уже экспортируется
     if (!themeParams || !document.documentElement) return;
     console.log("Applying Telegram theme:", themeParams);
 
@@ -325,11 +295,10 @@ export function applyTelegramTheme(themeParams) {
     const body = domElements.body;
 
     const hexToRgbString = (hex) => {
-        const rgb = hexToRgb(hex); // Assuming hexToRgb returns {r,g,b} or null
+        const rgb = hexToRgb(hex);
         return rgb ? `${rgb.r}, ${rgb.g}, ${rgb.b}` : null;
     };
 
-    // Set main colors
     root.style.setProperty('--tg-theme-bg-color', themeParams.bg_color || '#ffffff');
     root.style.setProperty('--tg-theme-text-color', themeParams.text_color || '#000000');
     root.style.setProperty('--tg-theme-hint-color', themeParams.hint_color || '#aaaaaa');
@@ -338,24 +307,21 @@ export function applyTelegramTheme(themeParams) {
     root.style.setProperty('--tg-theme-button-text-color', themeParams.button_text_color || '#ffffff');
     root.style.setProperty('--tg-theme-secondary-bg-color', themeParams.secondary_bg_color || '#f1f1f1');
 
-    // Set RGB versions
     const linkRgb = hexToRgbString(themeParams.link_color);
     const buttonRgb = hexToRgbString(themeParams.button_color);
-    const textRgb = hexToRgbString(themeParams.text_color); // Added for select arrow
+    const textRgb = hexToRgbString(themeParams.text_color);
 
     root.style.setProperty('--tg-theme-link-rgb', linkRgb || '13, 110, 253');
     root.style.setProperty('--tg-theme-button-rgb', buttonRgb || '82, 136, 193');
     root.style.setProperty('--tg-theme-text-rgb', textRgb || '0, 0, 0');
 
-    // Set body class for dark/light mode detection and TMA active state
     if (body && themeParams.bg_color) {
-        const isDark = isColorDark(themeParams.bg_color); // Assumes isColorDark is imported/available
+        const isDark = isColorDark(themeParams.bg_color);
         body.classList.toggle('dark-theme', isDark);
         body.classList.toggle('light-theme', !isDark);
-        body.classList.add('tma-active'); // Mark as running in TMA context
+        body.classList.add('tma-active');
     }
 
-    // Update Telegram native header/background colors
     WebApp?.setHeaderColor?.(themeParams.secondary_bg_color || themeParams.bg_color || '#ffffff');
     WebApp?.setBackgroundColor?.(themeParams.bg_color || '#ffffff');
 }
