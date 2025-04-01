@@ -2,7 +2,7 @@
 
 // --- Импорт Модулей ---
 import { INTERPOLATION_METHODS, DEFAULTS } from './config.js';
-import { isValidPalette } from './utils.js'; // lerp и smoothPaletteHueOnly не нужны здесь
+import { isValidPalette } from './utils.js';
 import { initializeInterpolation } from './interpolation.js';
 import { generatePaletteData } from './paletteGenerator.js';
 import {
@@ -12,7 +12,7 @@ import {
     toggleVerticalControlsUI,
     copyColorToClipboard, // Оставляем для ячеек
     displayPaletteMessage,
-    applyTelegramTheme // Импортируем новую функцию
+    applyTelegramTheme
 } from './ui.js';
 import { initializeExport, exportSVG, exportPDF } from './export.js';
 
@@ -40,8 +40,8 @@ try {
     // Инициализация Telegram WebApp SDK
     if (window.Telegram && window.Telegram.WebApp) {
         WebApp = window.Telegram.WebApp;
-        WebApp.ready(); // Сообщаем, что приложение готово
-        WebApp.expand(); // Растягиваем на весь экран
+        WebApp.ready();
+        WebApp.expand();
         isTma = true;
         console.log("Telegram WebApp SDK initialized.");
     } else {
@@ -54,7 +54,7 @@ try {
     if (window.Color) { ColorJsLib = window.Color; }
     else { console.error("Color.js library not found."); }
 
-    // Проверка загрузки всех НЕОБХОДИМЫХ библиотек (Telegram SDK опционален)
+    // Проверка загрузки всех НЕОБХОДИМЫХ библиотек
     if (jsPDFConstructor && ColorJsLib && materialColorUtilities) {
         console.log("Core libraries (jsPDF, Color.js, Material Color Utilities) loaded successfully.");
         librariesLoaded = true;
@@ -74,7 +74,6 @@ try {
 }
 
 // --- DOM Element References ---
-// (Остается без изменений, но используется domElements)
 const domElements = {
     colorLeftInput: document.getElementById('color-left'),
     colorRightInput: document.getElementById('color-right'),
@@ -93,14 +92,13 @@ const domElements = {
     exportSvgButton: document.getElementById('export-svg'),
     exportPdfButton: document.getElementById('export-pdf'),
     copyNotificationElement: document.getElementById('copy-notification'),
-    // closeButton: document.getElementById('close-button'), // Если добавили кнопку закрытия
     body: document.body
 };
 
 // --- Проверка DOM ---
 function checkDOMelements() {
     const missingElements = Object.entries(domElements)
-        .filter(([key, value]) => key !== 'closeButton' && !value) // closeButton опционален
+        .filter(([key, value]) => !value)
         .map(([key]) => key);
     if (missingElements.length > 0) {
         console.error("Essential DOM elements are missing:", missingElements);
@@ -121,27 +119,21 @@ let currentPalette = [];
 let modulesInitialized = false;
 if (librariesLoaded && domReady) {
     try {
-        // Изменено: Передаем экземпляр WebApp в UI
         initializeUI(domElements, WebApp);
-
-        // Применяем тему Telegram сразу, если она есть
         if (isTma && WebApp.themeParams) {
             applyTelegramTheme(WebApp.themeParams);
         }
-
         const interpolationInitialized = initializeInterpolation({
             colorjs: ColorJsLib,
             materialColor: materialColorUtilities
         });
         const exportInitialized = initializeExport({ jsPDFConstructor: jsPDFConstructor });
-
         if (!exportInitialized && domElements.exportPdfButton) {
             domElements.exportPdfButton.disabled = true;
             domElements.exportPdfButton.title = "PDF export disabled (jsPDF library not loaded)";
         }
         modulesInitialized = true;
         console.log("All modules initialized.");
-
     } catch (initError) {
         console.error("Error during module initialization:", initError);
         displayPaletteMessage(`Initialization Error: ${initError.message}.`);
@@ -153,19 +145,15 @@ if (librariesLoaded && domReady) {
      if (domElements.exportPdfButton) domElements.exportPdfButton.disabled = true;
 }
 
-
 // --- Core Application Logic ---
-
 /**
  * Собирает настройки, генерирует и рендерит палитру.
- * Также настраивает Main Button в TMA.
  */
 function updateAndRenderPalette() {
     if (!modulesInitialized || !domReady) {
         console.warn("Skipping palette generation: Modules not initialized or DOM not ready.");
         return;
     }
-
     const settings = {
         leftColor: domElements.colorLeftInput.value,
         rightColor: domElements.colorRightInput.value,
@@ -176,32 +164,28 @@ function updateAndRenderPalette() {
         method: domElements.interpolationMethodSelect.value,
         useVertical: domElements.verticalInterpolationToggle.checked
     };
-
     currentPalette = generatePaletteData(settings);
-    renderPalette(currentPalette, copyColorToClipboard); // Используем callback для клика
+    renderPalette(currentPalette, copyColorToClipboard);
 
-    // Настройка Main Button после генерации палитры
-    setupMainButton();
+    // ----- ИЗМЕНЕНИЕ ЗДЕСЬ -----
+    // Убираем вызов функции настройки Main Button Telegram
+    // setupMainButton();
+    // ---------------------------
 }
 
-// --- Telegram Main Button Logic ---
-
+// --- Telegram Main Button Logic (Оставляем функции, но не вызываем setup) ---
 /** Настраивает основную кнопку Telegram */
 function setupMainButton() {
-    if (!isTma || !WebApp) return; // Работаем только в TMA
-
-    // Сначала убираем старый обработчик, если он был
-    WebApp.MainButton.offClick(handleMainButtonClick);
-
+    if (!isTma || !WebApp) return;
+    WebApp.MainButton.offClick(handleMainButtonClick); // Снимаем старый обработчик на всякий случай
     if (isValidPalette(currentPalette)) {
-        WebApp.MainButton.setText("Export SVG"); // Основное действие - SVG
+        WebApp.MainButton.setText("Export SVG");
         WebApp.MainButton.onClick(handleMainButtonClick);
         WebApp.MainButton.show();
     } else {
-        WebApp.MainButton.hide(); // Скрываем, если палитра невалидна
+        WebApp.MainButton.hide();
     }
 }
-
 /** Обработчик клика по Main Button */
 function handleMainButtonClick() {
      if (!isValidPalette(currentPalette)) {
@@ -209,15 +193,10 @@ function handleMainButtonClick() {
          else alert("Generate a valid palette first.");
          return;
      }
-     // По умолчанию экспортируем SVG
      exportSVG(currentPalette);
-
-     // Опционально: можно добавить логику для выбора SVG/PDF
-     // через showPopup или смену текста кнопки
 }
 
 // --- Event Listeners Setup ---
-
 function setupEventListeners() {
      if (!modulesInitialized || !domReady) {
           console.warn("Skipping event listener setup: Modules/DOM not ready.");
@@ -262,7 +241,7 @@ function setupEventListeners() {
         });
     }
 
-    // Слушатели для обычных кнопок экспорта (остаются для non-TMA)
+    // Слушатели для обычных кнопок экспорта
     if (domElements.exportSvgButton) {
         domElements.exportSvgButton.addEventListener('click', () => exportSVG(currentPalette));
     }
@@ -273,20 +252,11 @@ function setupEventListeners() {
     // Слушатель изменения темы Telegram
     if (isTma && WebApp) {
         WebApp.onEvent('themeChanged', () => applyTelegramTheme(WebApp.themeParams));
-         // Слушатель изменения видимости MainButton (например, при открытии клавиатуры)
-        WebApp.onEvent('mainButtonClicked', handleMainButtonClick); // Добавляем резервный обработчик
-
-        // Опционально: кнопка закрытия
-        /*
-        if (domElements.closeButton) {
-            domElements.closeButton.style.display = 'block'; // Показываем кнопку в TMA
-            domElements.closeButton.addEventListener('click', () => WebApp.close());
-        }
-        */
+        // Убираем лишний обработчик для MainButton, т.к. мы её не показываем активно
+        // WebApp.onEvent('mainButtonClicked', handleMainButtonClick);
     }
 
-
-    // Слушатель ресайза окна (для перерисовки сетки)
+    // Слушатель ресайза окна
     let resizeTimeout;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
@@ -302,16 +272,12 @@ function setupEventListeners() {
 }
 
 // --- Initial Application Setup ---
-
 function initializeApp() {
     console.log("Initializing HueCraft Application...");
-
     if (!domReady || !librariesLoaded || !modulesInitialized) {
          console.error("Initialization failed due to missing DOM/libs/modules.");
-         // Сообщение об ошибке уже должно было быть показано
          return;
     }
-
     try {
         // Установка начальных значений из DEFAULTS
         domElements.colorLeftInput.value = DEFAULTS.LEFT_COLOR;
@@ -323,13 +289,12 @@ function initializeApp() {
         domElements.interpolationMethodSelect.value = DEFAULTS.INTERPOLATION_METHOD;
         domElements.verticalInterpolationToggle.checked = DEFAULTS.VERTICAL_ENABLED;
 
-        // Обновление UI для слайдеров и вертикальных контролов
         updateSliderValueDisplay(domElements.horizontalLevelsSlider, domElements.horizontalLevelsValueSpan);
         updateSliderValueDisplay(domElements.verticalLevelsSlider, domElements.verticalLevelsValueSpan);
         toggleVerticalControlsUI(domElements.verticalInterpolationToggle.checked);
 
-        setupEventListeners(); // Настраиваем слушатели
-        updateAndRenderPalette(); // Генерируем и рендерим начальную палитру (включая MainButton)
+        setupEventListeners();
+        updateAndRenderPalette(); // Генерируем начальную палитру (Main Button больше не настроится)
 
         console.log("HueCraft Initialization Complete.");
     } catch (error) {
