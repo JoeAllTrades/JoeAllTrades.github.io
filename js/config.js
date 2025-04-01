@@ -10,8 +10,8 @@ export const INTERPOLATION_METHODS = {
 
 // Настройки по умолчанию (если нужно централизовать)
 export const DEFAULTS = {
-    LEFT_COLOR: '#b71c1c',
-    RIGHT_COLOR: '#0d47a1',
+    LEFT_COLOR: '#9C27B0',
+    RIGHT_COLOR: '#2196F3',
     TOP_COLOR: '#ffffff',
     BOTTOM_COLOR: '#000000',
     H_LEVELS: 7,
