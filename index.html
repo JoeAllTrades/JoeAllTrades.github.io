@@ -2,12 +2,26 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no"> <!-- Добавлено user-scalable=no -->
-    <title>HueCraft</title> <!-- Короче title -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>HueCraft</title>
+
+    <!-- Pickr CSS Theme (Nano) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css"/>
+
+    <!-- Main Stylesheet -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Telegram WebApp Script (if used) -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Other Libraries -->
     <script src="lib/jspdf.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/colorjs.io@0.5.1/dist/color.global.min.js"></script>
+
+    <!-- Pickr JS Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/pickr.min.js"></script>
+
+    <!-- Main Application Script (Module) -->
     <script type="module" src="js/main.js"></script>
 </head>
 <body>
@@ -20,54 +34,54 @@
             <div class="control-group toggle-group">
                  <label class="checkbox-label">
                     <input type="checkbox" id="vertical-interpolation-toggle">
-                    <!-- Текст можно сократить -->
                     4-Color Mode
                 </label>
             </div>
 
+            <!-- Color Pickers Row with Buttons instead of Inputs -->
             <div class="color-picker-row">
                 <div class="control-group color-left">
-                    <label for="color-left">Left:</label> <!-- Короче -->
-                    <input type="color" id="color-left" value="#b71c1c">
+                    <label for="color-left-trigger">Left:</label>
+                    <!-- Button trigger for Pickr -->
+                    <button type="button" class="color-picker-trigger" id="color-left-trigger" data-color="#b71c1c"></button>
                 </div>
                 <div class="control-group color-right">
-                    <label for="color-right">Right:</label> <!-- Короче -->
-                    <input type="color" id="color-right" value="#0d47a1">
+                    <label for="color-right-trigger">Right:</label>
+                    <!-- Button trigger for Pickr -->
+                    <button type="button" class="color-picker-trigger" id="color-right-trigger" data-color="#0d47a1"></button>
                 </div>
                 <div class="control-group color-top vertical-color">
-                    <label for="color-top">Top:</label> <!-- Короче -->
-                    <input type="color" id="color-top" value="#ffffff">
+                    <label for="color-top-trigger">Top:</label>
+                    <!-- Button trigger for Pickr -->
+                    <button type="button" class="color-picker-trigger" id="color-top-trigger" data-color="#ffffff"></button>
                 </div>
                 <div class="control-group color-bottom vertical-color">
-                    <label for="color-bottom">Bottom:</label> <!-- Короче -->
-                    <input type="color" id="color-bottom" value="#000000">
+                    <label for="color-bottom-trigger">Bottom:</label>
+                    <!-- Button trigger for Pickr -->
+                    <button type="button" class="color-picker-trigger" id="color-bottom-trigger" data-color="#000000"></button>
                 </div>
             </div>
 
+            <!-- Sliders and Select -->
             <div class="control-group slider-group">
-                <!-- Текст можно сократить -->
                 <label for="horizontal-levels">H-Levels (<span id="horizontal-levels-value">7</span>):</label>
                 <input type="range" id="horizontal-levels" min="2" max="20" value="7">
             </div>
-
             <div class="control-group slider-group vertical-slider-group" style="display: none;">
-                 <!-- Текст можно сократить -->
                 <label for="vertical-levels">V-Steps (+/- <span id="vertical-levels-value">2</span>):</label>
                 <input type="range" id="vertical-levels" min="1" max="8" value="2">
             </div>
-
              <div class="control-group">
-                <label for="interpolation-method">Method:</label> <!-- Короче -->
+                <label for="interpolation-method">Method:</label>
                 <select id="interpolation-method">
                     <option value="rgb">RGB</option>
                     <option value="hsl">HSL</option>
-                    <option value="lab" selected>CIELAB</option> <!-- Чуть короче -->
+                    <option value="lab" selected>CIELAB</option>
                     <option value="hct">HCT</option>
                 </select>
             </div>
-            <!-- Добавляем пустой div для возможного отступа снизу при скролле панели настроек -->
+            <!-- Spacer for scroll -->
             <div style="height: 1px; flex-shrink: 0;"></div>
-
         </div>
 
         <!-- Palette Display Panel -->
@@ -85,6 +99,7 @@
         </div>
 
     </div>
+    <!-- Copy Notification Area -->
     <div id="copy-notification" class="copy-notification"></div>
 </body>
 </html>
