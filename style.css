@@ -1,4 +1,4 @@
-/* style.css - Complete version for non-scrolling layout */
+/* style.css - Complete version for non-scrolling layout with Pickr */
 
 /* Basic Reset & Body Styles */
 * {
@@ -19,10 +19,11 @@
     --tg-theme-secondary-bg-color: #f1f1f1;
 
     /* RGB versions for rgba() usage */
-    --tg-theme-link-rgb: 13, 110, 253; /* Default for #0d6efd used before */
-    --tg-theme-button-rgb: 82, 136, 193; /* Default for #5288c1 */
+    --tg-theme-link-rgb: 13, 110, 253;
+    --tg-theme-button-rgb: 82, 136, 193;
+    --tg-theme-text-rgb: 0, 0, 0; /* Default for text color */
 
-    /* Variables for safe areas (important with viewport-fit=cover) */
+    /* Variables for safe areas */
     --safe-area-inset-top: env(safe-area-inset-top, 0px);
     --safe-area-inset-right: env(safe-area-inset-right, 0px);
     --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
@@ -32,20 +33,19 @@
 /* Full Height Setup */
 html {
     height: 100%;
-    font-size: 15px; /* Slightly smaller base */
+    font-size: 15px;
 }
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     background-color: var(--tg-theme-bg-color);
     color: var(--tg-theme-text-color);
-    line-height: 1.4; /* Compact line height */
+    line-height: 1.4;
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Fallback */
-    height: 100dvh; /* Use dynamic viewport height */
+    height: 100vh;
+    height: 100dvh;
     overflow: hidden; /* Prevent body scrolling */
-    /* Adjust padding to use safe areas and be minimal */
     padding: calc(0.5rem + var(--safe-area-inset-top))
              calc(0.5rem + var(--safe-area-inset-right))
              calc(0.5rem + var(--safe-area-inset-bottom))
@@ -60,14 +60,14 @@ body {
     gap: 0.75rem;
     width: 100%;
     max-width: 100%;
-    flex-grow: 1; /* Takes up all vertical space in body */
-    min-height: 0; /* Flexbox hack */
+    flex-grow: 1;
+    min-height: 0;
     background-color: var(--tg-theme-secondary-bg-color, var(--tg-theme-bg-color));
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
     padding: 0.75rem;
     border: 1px solid var(--tg-theme-hint-color);
-    overflow: hidden; /* Prevent overflow from container */
+    overflow: hidden;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
@@ -75,21 +75,19 @@ body {
 .settings-panel, .palette-panel {
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* Hide overflow by default */
+    overflow: hidden;
     padding: 0.8rem;
     border-radius: 6px;
     background-color: var(--tg-theme-bg-color);
     border: 1px solid var(--tg-theme-hint-color);
     transition: background-color 0.3s ease, border-color 0.3s ease;
-    min-height: 0; /* Flexbox hack */
+    min-height: 0;
 }
 
 /* Panel sizing (Default: Landscape) */
 .settings-panel {
-    flex: 0 0 280px; /* Fixed width for settings, adjust if needed */
-    /* flex: 1 0 280px; /* Alternative: Proportional but with base */
-    overflow-y: auto; /* Allow ONLY vertical scrolling within settings */
-    /* Scrollbar styling */
+    flex: 0 0 280px;
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--tg-theme-hint-color) transparent;
 }
@@ -98,8 +96,8 @@ body {
 .settings-panel::-webkit-scrollbar-track { background: transparent; }
 
 .palette-panel {
-    flex: 1 1 auto; /* Take remaining space */
-    min-width: 0; /* Flexbox hack */
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 /* Headings and Controls */
@@ -111,13 +109,13 @@ h2 {
     padding-bottom: 0.5rem;
     font-weight: 600;
     font-size: 1.1rem;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
     transition: color 0.3s ease, border-color 0.3s ease;
 }
 
 .control-group {
     margin-bottom: 0.75rem;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
 }
 .control-group:last-child { margin-bottom: 0; }
 
@@ -131,10 +129,9 @@ h2 {
     transition: color 0.3s ease;
 }
 
-/* Input, Select, Button Styling */
-.control-group input[type="color"],
+/* Input, Select, Button Styling (Excluding color inputs) */
 .control-group select,
-.control-group button {
+.control-group button:not(.color-picker-trigger) { /* Apply general button styles only to non-picker buttons */
     width: 100%;
     padding: 0.5rem 0.7rem;
     border: 1px solid var(--tg-theme-hint-color);
@@ -146,7 +143,6 @@ h2 {
 }
 
 .control-group select {
-    /* Adjust arrow color based on theme */
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba(var(--tg-theme-text-rgb, 0,0,0), 0.7)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 0.6rem center;
@@ -154,31 +150,65 @@ h2 {
     appearance: none;
 }
 
-.control-group input[type="color"]:hover,
+/* Hover/Focus for Select and non-picker Buttons */
 .control-group select:hover,
-.control-group button:hover {
+.control-group button:not(.color-picker-trigger):hover {
      border-color: var(--tg-theme-button-color);
 }
-.control-group input[type="color"]:focus,
 .control-group select:focus,
-.control-group button:focus {
+.control-group button:not(.color-picker-trigger):focus {
     border-color: var(--tg-theme-link-color);
     outline: 0;
     box-shadow: 0 0 0 0.15rem rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.25);
 }
 
-/* Color Input Specifics */
-.control-group input[type="color"] {
-    height: 38px;
-    padding: 3px;
-    cursor: pointer;
-    -webkit-appearance: none; -moz-appearance: none; appearance: none;
-    background-color: transparent;
+/* Styles for the Pickr Trigger Button */
+.color-picker-trigger {
+    width: 100%;
+    height: 30px;
     border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 0;
+    font-size: 0; /* Hide potential button text */
+    background-color: #ccc; /* Placeholder, replaced by JS */
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    vertical-align: middle;
+    appearance: none;
 }
-.control-group input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 3px; }
-.control-group input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
-.control-group input[type="color"]::-moz-color-swatch { border: none; border-radius: 3px; }
+
+.color-picker-trigger:focus {
+    outline: none;
+    border-color: var(--tg-theme-link-color);
+    box-shadow: 0 0 0 0.15rem rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.25);
+}
+.color-picker-trigger:hover {
+    border-color: var(--tg-theme-button-color);
+}
+
+
+/* Pickr App container styles */
+.pcr-app {
+    z-index: 1050; /* Ensure it's above other elements */
+    /* Apply theme variables if Pickr themes don't automatically inherit */
+    /* Example for nano theme background (might need !important depending on specificity) */
+    /*
+    &.visible {
+      background: var(--tg-theme-bg-color);
+      color: var(--tg-theme-text-color);
+    }
+    .pcr-interaction input {
+       background: var(--tg-theme-secondary-bg-color);
+       border: 1px solid var(--tg-theme-hint-color);
+       color: var(--tg-theme-text-color);
+    }
+    .pcr-button {
+        background: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
+    }
+    */
+}
+
 
 /* Range Input Specifics */
 .control-group input[type="range"] {
@@ -228,7 +258,11 @@ h2 {
 .color-picker-row { display: flex; gap: 0.5rem; align-items: flex-end; margin-bottom: 1rem; flex-wrap: wrap; }
 .color-picker-row .control-group { flex: 1; min-width: 50px; margin-bottom: 0; }
 .color-picker-row label { font-size: 0.75rem; margin-bottom: 0.2rem; white-space: nowrap; }
-.color-picker-row input[type="color"] { height: 30px; min-width: 40px; }
+/* Size adjustment for the trigger within the row */
+.color-picker-row .color-picker-trigger {
+    height: 30px;
+    min-width: 40px;
+}
 
 /* Vertical controls visibility */
 .vertical-color { display: none; }
@@ -236,8 +270,8 @@ body.vertical-mode-enabled .vertical-color { display: block; }
 .vertical-slider-group { display: none; margin-top: -0.25rem; }
 body.vertical-mode-enabled .vertical-slider-group { display: block; }
 
-/* Buttons */
-button {
+/* Export Buttons styling */
+button:not(.color-picker-trigger) { /* Apply only to non-picker buttons */
     background-color: var(--tg-theme-button-color);
     color: var(--tg-theme-button-text-color);
     border: none; cursor: pointer;
@@ -247,36 +281,31 @@ button {
     border-radius: 5px;
     font-size: 0.9rem;
 }
-button:hover:not(:disabled) { filter: brightness(1.1); }
-button:focus {
-    border-color: var(--tg-theme-link-color);
-    outline: 0;
-    box-shadow: 0 0 0 0.15rem rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.25);
-}
-button:disabled {
+button:not(.color-picker-trigger):hover:not(:disabled) { filter: brightness(1.1); }
+button:not(.color-picker-trigger):disabled {
     background-color: var(--tg-theme-hint-color);
     cursor: not-allowed; opacity: 0.65; filter: none;
 }
 .export-buttons {
     margin-top: 0.8rem;
     display: flex; gap: 0.5rem;
-    flex-shrink: 0; /* Prevent shrinking */
+    flex-shrink: 0;
 }
 .export-buttons button { flex: 1; }
 
 
 /* Palette Grid Container */
 .palette-grid-container {
-    flex-grow: 1; /* Takes all available vertical space in palette-panel */
-    overflow: hidden; /* Hide overflow if grid doesn't fit */
+    flex-grow: 1;
+    overflow: hidden;
     border: 1px solid var(--tg-theme-hint-color);
     background-color: var(--tg-theme-secondary-bg-color);
     border-radius: 6px;
-    min-height: 0; /* Flexbox hack */
+    min-height: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 4px; /* Small padding around the grid */
+    padding: 4px;
     position: relative;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
@@ -284,11 +313,10 @@ button:disabled {
 /* Palette Grid */
 #palette-grid {
     display: grid;
-    gap: 3px; /* Small gap between cells */
+    gap: 3px;
     background-color: transparent;
     max-width: 100%;
     max-height: 100%;
-    /* Sizing is controlled by JavaScript based on container */
 }
 
 /* Color Cell */
@@ -298,7 +326,7 @@ button:disabled {
     transition: transform 0.1s ease-out, box-shadow 0.1s ease-out;
     box-shadow: 0 0 0 0px rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0);
     background-clip: padding-box;
-    aspect-ratio: 1 / 1; /* Keep cells square */
+    aspect-ratio: 1 / 1;
 }
 .color-cell:hover {
     transform: scale(1.06);
@@ -314,7 +342,8 @@ button:disabled {
     background-color: rgba(0, 0, 0, 0.75); color: white;
     padding: 8px 14px;
     border-radius: 6px; font-size: 0.9rem;
-    z-index: 1000; opacity: 0; visibility: hidden;
+    z-index: 1051; /* Higher than Pickr potentially */
+    opacity: 0; visibility: hidden;
     transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.3s ease;
     pointer-events: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
@@ -325,7 +354,6 @@ button:disabled {
 /* Responsive Adjustments for Portrait / Smaller Screens */
 @media (max-width: 700px), (orientation: portrait) {
     body {
-        /* Minimal padding on small screens */
         padding: calc(0.3rem + var(--safe-area-inset-top))
                  calc(0.3rem + var(--safe-area-inset-right))
                  calc(0.3rem + var(--safe-area-inset-bottom))
@@ -337,25 +365,25 @@ button:disabled {
         gap: 0.5rem;
     }
     .settings-panel {
-        flex: 0 0 auto; /* Height based on content, but limited */
-        max-height: 55%; /* Limit height, adjust percentage as needed */
-        overflow-y: auto; /* Ensure scrolling if content exceeds max-height */
+        flex: 0 0 auto;
+        max-height: 55%; /* Limit height, adjust if needed */
+        overflow-y: auto;
         width: 100%;
     }
     .palette-panel {
-        flex: 1 1 auto; /* Take remaining vertical space */
-        min-height: 0; /* Crucial for flex shrink */
+        flex: 1 1 auto;
+        min-height: 0;
         width: 100%;
     }
-     /* Further reduce sizes in portrait mode */
+    /* Further reduce sizes in portrait mode */
     h2 { font-size: 1rem; margin-bottom: 0.5rem; padding-bottom: 0.4rem;}
     .control-group { margin-bottom: 0.6rem; }
     .control-group label { font-size: 0.8rem; }
-    .control-group input[type="color"], .control-group select, .control-group button { font-size: 0.85rem; padding: 0.4rem 0.6rem; }
-    .control-group input[type="color"] { height: 32px; }
-    .color-picker-row input[type="color"] { height: 28px; }
-    button { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
-    .export-buttons { margin-top: 0.5rem; flex-direction: column; gap: 0.3rem; } /* Stack export buttons */
+    .control-group select, .control-group button:not(.color-picker-trigger) { font-size: 0.85rem; padding: 0.4rem 0.6rem; }
+    .color-picker-trigger { height: 28px; } /* Adjust trigger height */
+    .color-picker-row .color-picker-trigger { height: 28px; min-width: 35px; } /* Adjust trigger size in row */
+    button:not(.color-picker-trigger) { padding: 0.5rem 0.8rem; font-size: 0.85rem; }
+    .export-buttons { margin-top: 0.5rem; flex-direction: column; gap: 0.3rem; }
     #palette-grid { gap: 2px; }
     .color-cell { border-radius: 3px; }
     .color-cell:hover { transform: scale(1.04); box-shadow: 0 0 0 1px rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.7); }
@@ -363,15 +391,14 @@ button:disabled {
 
 /* Dark Theme Adjustments */
 body.dark-theme .control-group select {
-     /* Update SVG arrow color for dark theme */
-     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba(var(--tg-theme-text-rgb, 255,255,255), 0.7)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    /* Update SVG arrow color for dark theme */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='rgba(var(--tg-theme-text-rgb, 255,255,255), 0.7)' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    --tg-theme-text-rgb: 255, 255, 255; /* Set text rgb for dark theme */
 }
 body.dark-theme .settings-panel::-webkit-scrollbar-thumb { background-color: #555; }
 body.dark-theme .settings-panel { scrollbar-color: #555 transparent; }
-body.dark-theme .app-container { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); } /* Slightly stronger shadow on dark */
-
+body.dark-theme .app-container { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+body.dark-theme { --tg-theme-text-rgb: 255, 255, 255; } /* Update text rgb variable for dark theme */
 
 /* Optional: Hide standard export buttons if running in TMA and MainButton is used */
-/* body.tma-active .export-buttons {
-    display: none;
-} */
+/* body.tma-active .export-buttons { display: none; } */
