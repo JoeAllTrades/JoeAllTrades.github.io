@@ -1,0 +1,381 @@
+/* Basic Reset & Body Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Добавлено: Определение CSS переменных для темы Telegram */
+:root {
+    /* Цвета из Telegram themeParams (с дефолтными значениями) */
+    --tg-theme-bg-color: #ffffff;
+    --tg-theme-text-color: #000000;
+    --tg-theme-hint-color: #aaaaaa;
+    --tg-theme-link-color: #2481cc;
+    --tg-theme-button-color: #5288c1;
+    --tg-theme-button-text-color: #ffffff;
+    --tg-theme-secondary-bg-color: #f1f1f1;
+
+    /* Переменные для безопасных зон (важно при viewport-fit=cover) */
+    --safe-area-inset-top: env(safe-area-inset-top, 0px);
+    --safe-area-inset-right: env(safe-area-inset-right, 0px);
+    --safe-area-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-area-inset-left: env(safe-area-inset-left, 0px);
+}
+
+html {
+    font-size: 16px; /* Base font size */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    /* Изменено: Используем переменные Telegram */
+    background-color: var(--tg-theme-bg-color);
+    color: var(--tg-theme-text-color);
+    line-height: 1.5;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    min-height: 100dvh; /* Улучшенная версия для мобильных */
+    /* Изменено: Учитываем безопасные зоны */
+    padding: calc(2rem + var(--safe-area-inset-top)) /* top */
+             calc(1rem + var(--safe-area-inset-right)) /* right */
+             calc(1rem + var(--safe-area-inset-bottom)) /* bottom */
+             calc(1rem + var(--safe-area-inset-left)); /* left */
+    transition: background-color 0.3s ease, color 0.3s ease; /* Плавный переход темы */
+}
+
+/* App Container Layout */
+.app-container {
+    display: flex;
+    gap: 2rem; /* Spacing between panels */
+    width: 100%;
+    max-width: 1500px; /* Adjust as needed */
+    /* Изменено: Используем secondary цвет, если есть, иначе основной */
+    background-color: var(--tg-theme-secondary-bg-color, var(--tg-theme-bg-color));
+    border-radius: 12px; /* Softer corners */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+    padding: 2rem;
+    flex-wrap: wrap; /* Allow wrapping */
+    border: 1px solid var(--tg-theme-hint-color); /* Добавляем границу с цветом подсказки */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Panels */
+.settings-panel, .palette-panel {
+    padding: 1.5rem;
+    border-radius: 8px;
+    /* Изменено: Фон панели (можно оставить белым или использовать secondary) */
+    background-color: var(--tg-theme-bg-color); /* Оставим фон панели чуть светлее secondary */
+    /* Изменено: Граница панели */
+    border: 1px solid var(--tg-theme-hint-color); /* Subtle border */
+    display: flex;
+    flex-direction: column; /* Align content vertically */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.settings-panel {
+    flex: 1;
+    min-width: 320px; /* Minimum width */
+}
+
+.palette-panel {
+    flex: 2.5; /* More space for palette */
+    min-width: 450px;
+    position: relative;
+    padding: 1.5rem;
+}
+
+h2 {
+    margin-bottom: 1.5rem;
+    /* Изменено: Цвет заголовка */
+    color: var(--tg-theme-link-color);
+    text-align: center;
+    /* Изменено: Цвет линии под заголовком */
+    border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
+    padding-bottom: 0.8rem;
+    font-weight: 600;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Control Groups */
+.control-group {
+    margin-bottom: 1.25rem;
+}
+.control-group:last-child { margin-bottom: 0; }
+
+.control-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    /* Изменено: Цвет текста метки (можно использовать основной или hint) */
+    color: var(--tg-theme-text-color);
+    font-size: 0.9rem;
+    opacity: 0.9; /* Чуть бледнее основного */
+    transition: color 0.3s ease;
+}
+
+/* Input, Select, Button Styling */
+.control-group input[type="color"],
+.control-group select,
+.control-group button {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    /* Изменено: Цвет границы */
+    border: 1px solid var(--tg-theme-hint-color);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    /* Изменено: Фон и цвет текста для лучшей поддержки тем */
+    background-color: var(--tg-theme-secondary-bg-color);
+    color: var(--tg-theme-text-color);
+}
+
+.control-group select {
+    /* Небольшая настройка для select на темном фоне */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    appearance: none; /* Убираем стандартную стрелку */
+}
+/* Изменено: Используем переменные для hover/focus */
+.control-group input[type="color"]:hover,
+.control-group select:hover,
+.control-group button:hover {
+     border-color: var(--tg-theme-button-color); /* Цвет кнопки при наведении */
+}
+.control-group input[type="color"]:focus,
+.control-group select:focus,
+.control-group button:focus {
+    border-color: var(--tg-theme-link-color); /* Цвет ссылки при фокусе */
+    outline: 0;
+    /* Адаптируем цвет тени */
+    box-shadow: 0 0 0 0.2rem rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.25); /* Нужна RGB версия link_color */
+}
+
+/* Color Input Specifics */
+.control-group input[type="color"] {
+    height: 45px;
+    cursor: pointer;
+    padding: 4px;
+     -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: transparent; /* Не меняем */
+    border: 1px solid var(--tg-theme-hint-color); /* Граница */
+}
+.control-group input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; border-radius: 4px; }
+.control-group input[type="color"]::-webkit-color-swatch { border: none; border-radius: 4px; }
+.control-group input[type="color"]::-moz-color-swatch { border: none; border-radius: 4px; }
+
+/* Range Input Specifics */
+.control-group input[type="range"] {
+    width: 100%;
+    height: 8px; /* Чуть толще */
+    cursor: pointer;
+    /* Изменено: Цвет активной части и фона */
+    accent-color: var(--tg-theme-button-color);
+    background: var(--tg-theme-secondary-bg-color);
+    border-radius: 4px;
+    -webkit-appearance: none;
+    appearance: none;
+    outline: none;
+    border: 1px solid var(--tg-theme-hint-color);
+    transition: background-color 0.3s ease, border-color 0.3s ease, accent-color 0.3s ease;
+}
+/* Изменено: Цвет ползунка */
+.control-group input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px; /* Чуть больше */
+  height: 20px;
+  background: var(--tg-theme-button-color); /* Цвет кнопки */
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--tg-theme-bg-color); /* Обводка цветом фона */
+  transition: background-color 0.3s ease;
+}
+.control-group input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--tg-theme-button-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid var(--tg-theme-bg-color);
+   transition: background-color 0.3s ease;
+}
+
+/* Slider Label Styling */
+.slider-group label { display: flex; justify-content: space-between; align-items: center; }
+.slider-group label span {
+    font-weight: normal;
+    /* Изменено: Цвет значения */
+    color: var(--tg-theme-hint-color);
+    transition: color 0.3s ease;
+}
+
+/* Toggle Group (Checkbox) */
+.toggle-group { margin-bottom: 1.5rem; padding-top: 0; border-top: none; }
+.checkbox-label { display: flex; align-items: center; cursor: pointer; font-weight: 500; color: var(--tg-theme-text-color); position: relative; transition: color 0.3s ease; }
+.checkbox-label input[type="checkbox"] {
+    margin-right: 0.6rem;
+    width: 1.1rem; /* Чуть больше */
+    height: 1.1rem;
+    /* Изменено: Цвет чекбокса */
+    accent-color: var(--tg-theme-link-color);
+    cursor: pointer;
+    transition: accent-color 0.3s ease;
+}
+
+/* Color Picker Row Layout */
+.color-picker-row { display: flex; gap: 0.8rem; align-items: flex-end; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.color-picker-row .control-group { flex: 1; min-width: 60px; margin-bottom: 0; }
+.color-picker-row label { font-size: 0.8rem; margin-bottom: 0.3rem; white-space: nowrap; }
+.color-picker-row input[type="color"] { height: 35px; min-width: 50px; }
+
+/* Vertical Color Pickers Visibility */
+.vertical-color { display: none; }
+body.vertical-mode-enabled .vertical-color { display: block; }
+
+/* Vertical Slider Group Visibility */
+.vertical-slider-group { display: none; margin-top: -0.25rem; }
+body.vertical-mode-enabled .vertical-slider-group { display: block; }
+
+/* Buttons */
+button {
+    /* Изменено: Используем цвета кнопки из темы */
+    background-color: var(--tg-theme-button-color);
+    color: var(--tg-theme-button-text-color);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+    font-weight: 500;
+    padding: 0.7rem 1rem;
+    border-radius: 6px;
+}
+button:hover:not(:disabled) {
+    /* Простое осветление/затемнение вместо смены цвета */
+    filter: brightness(1.1);
+}
+button:focus {
+     border-color: var(--tg-theme-link-color);
+     outline: 0;
+     box-shadow: 0 0 0 0.2rem rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.25);
+}
+button:disabled {
+    /* Изменено: Цвет для неактивной кнопки */
+    background-color: var(--tg-theme-hint-color);
+    cursor: not-allowed;
+    opacity: 0.65;
+}
+.export-buttons { margin-top: 1.5rem; display: flex; gap: 0.8rem; }
+.export-buttons button { flex: 1; }
+
+/* Palette Grid Container */
+.palette-grid-container {
+    flex-grow: 1;
+    overflow: hidden;
+    /* Изменено: Граница и фон */
+    border: 1px solid var(--tg-theme-hint-color);
+    background-color: var(--tg-theme-secondary-bg-color);
+    border-radius: 6px;
+    min-height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    position: relative;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Palette Grid */
+#palette-grid {
+    display: grid;
+    gap: 5px;
+    background-color: transparent;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Color Cell */
+.color-cell {
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease-out;
+    /* Изменено: Тень/обводка при наведении */
+    box-shadow: 0 0 0 0px rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0);
+    background-clip: padding-box;
+    aspect-ratio: 1 / 1;
+}
+.color-cell:hover {
+    transform: scale(1.08);
+    /* Изменено: Цвет тени/обводки */
+    box-shadow: 0 0 0 2px rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.7);
+    z-index: 10;
+}
+
+/* Copy Notification Styles (можно оставить как есть или адаптировать) */
+.copy-notification {
+    position: fixed;
+    /* Изменено: Учитываем безопасную зону снизу */
+    bottom: calc(20px + var(--safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    /* Стили по умолчанию */
+    background-color: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 10px 18px; /* Чуть больше */
+    border-radius: 8px;
+    font-size: 0.95rem;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, background-color 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+.copy-notification.show { opacity: 1; visibility: visible; }
+/* Цвет для ошибки (если isError=true в JS) */
+.copy-notification.error {
+     background-color: rgba(220, 53, 69, 0.85); /* Красный */
+}
+
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+    body { padding: calc(1.5rem + var(--safe-area-inset-top)) calc(1rem + var(--safe-area-inset-right)) calc(1rem + var(--safe-area-inset-bottom)) calc(1rem + var(--safe-area-inset-left)); }
+    .app-container { flex-direction: column; padding: 1.5rem; gap: 1.5rem; }
+    .settings-panel, .palette-panel { min-width: unset; width: 100%; }
+    .palette-panel { padding: 1.5rem; min-height: 400px; }
+    .color-picker-row { gap: 0.6rem; }
+}
+
+@media (max-width: 480px) {
+    html { font-size: 15px; }
+    body { padding: calc(1rem + var(--safe-area-inset-top)) calc(0.5rem + var(--safe-area-inset-right)) calc(0.5rem + var(--safe-area-inset-bottom)) calc(0.5rem + var(--safe-area-inset-left)); }
+    .app-container { padding: 1rem; gap: 1rem; }
+    .settings-panel, .palette-panel { padding: 1rem; }
+    .palette-panel { padding: 1rem; min-height: 300px;}
+    .export-buttons { flex-direction: column; }
+    .color-picker-row { gap: 0.5rem; }
+    .color-picker-row .control-group { min-width: calc(50% - 0.5rem); flex-basis: calc(50% - 0.5rem); }
+    #palette-grid { gap: 3px; }
+    .palette-grid-container { padding: 4px; }
+    .color-cell { border-radius: 3px; }
+    .color-cell:hover { transform: scale(1.05); box-shadow: 0 0 0 1px rgba(var(--tg-theme-link-rgb, 13, 110, 253), 0.7); }
+}
+
+/* Добавлено: Стилизация для темной темы (пример) */
+body.dark-theme .control-group select {
+     /* Обновляем стрелку для темного фона */
+     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Добавлено: Скрытие обычных кнопок экспорта при наличии MainButton в TMA */
+/* body.tma-active .export-buttons {
+    display: none;
+} */
+/* Пока оставим кнопки видимыми */

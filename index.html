@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Изменено: добавлен viewport-fit=cover для лучшего отображения в TMA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>HueCraft - Palette Generator</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Добавлено: Скрипт Telegram WebApp (должен быть одним из первых) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Local Libraries -->
+    <script src="lib/jspdf.umd.min.js"></script>
+    <!-- Подключаем Color.js через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/colorjs.io@0.5.1/dist/color.global.min.js"></script>
+
+    <!-- Главный скрипт (модуль) -->
+    <script type="module" src="js/main.js"></script>
+</head>
+<body>
+    <div class="app-container">
+
+        <!-- Settings Panel -->
+        <div class="settings-panel">
+            <h2>Settings</h2>
+
+            <!-- Vertical/4-Color Mode Toggle -->
+            <div class="control-group toggle-group">
+                 <label class="checkbox-label">
+                    <input type="checkbox" id="vertical-interpolation-toggle">
+                    Enable 4-Color Mode (Vertical Interpolation)
+                </label>
+            </div>
+
+            <!-- Color Pickers Row -->
+            <div class="color-picker-row">
+                <div class="control-group color-left">
+                    <label for="color-left">Left Color:</label>
+                    <input type="color" id="color-left" value="#b71c1c"> <!-- Default Red -->
+                </div>
+                <div class="control-group color-right">
+                    <label for="color-right">Right Color:</label>
+                    <input type="color" id="color-right" value="#0d47a1"> <!-- Default Blue -->
+                </div>
+                <!-- Vertical Colors (Shown/Hidden via CSS) -->
+                <div class="control-group color-top vertical-color">
+                    <label for="color-top">Top Color:</label>
+                    <input type="color" id="color-top" value="#ffffff"> <!-- Default White -->
+                </div>
+                <div class="control-group color-bottom vertical-color">
+                    <label for="color-bottom">Bottom Color:</label>
+                    <input type="color" id="color-bottom" value="#000000"> <!-- Default Black -->
+                </div>
+            </div>
+
+            <!-- Horizontal Levels Slider -->
+            <div class="control-group slider-group">
+                <label for="horizontal-levels">Horizontal Levels (<span id="horizontal-levels-value">7</span>):</label>
+                <input type="range" id="horizontal-levels" min="2" max="20" value="7">
+            </div>
+
+            <!-- Vertical Levels Slider (Positioned here, visibility controlled by CSS) -->
+            <div class="control-group slider-group vertical-slider-group" style="display: none;">
+                <label for="vertical-levels">Vertical Steps (+/- <span id="vertical-levels-value">2</span>):</label>
+                <input type="range" id="vertical-levels" min="1" max="8" value="2">
+            </div>
+
+            <!-- Interpolation Method Select (ОБНОВЛЕНО) -->
+             <div class="control-group">
+                <label for="interpolation-method">Interpolation Method:</label>
+                <select id="interpolation-method">
+                    <option value="rgb">RGB</option>
+                    <option value="hsl">HSL</option>
+                    <option value="lab" selected>Perceptual (CIELAB)</option> <!-- Lab по умолчанию -->
+                    <option value="hct">Perceptual (HCT)</option>
+                </select>
+            </div>
+
+        </div>
+
+        <!-- Palette Display Panel -->
+        <div class="palette-panel">
+            <h2>Palette</h2>
+            <div class="palette-grid-container">
+                 <div id="palette-grid">
+                    <!-- Color cells are generated here by JavaScript -->
+                 </div>
+            </div>
+            <!-- Оставляем кнопки для использования вне TMA или как альтернативу -->
+            <div class="export-buttons">
+                <button id="export-svg">Export SVG</button>
+                <button id="export-pdf">Export PDF</button>
+                <!-- Можно добавить кнопку закрытия, если нужно -->
+                <!-- <button id="close-button" style="display: none;">Close App</button> -->
+            </div>
+        </div>
+
+    </div>
+    <div id="copy-notification" class="copy-notification"></div>
+</body>
+</html>
